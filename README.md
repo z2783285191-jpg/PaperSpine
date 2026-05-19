@@ -20,13 +20,27 @@ Install the whole folder, not only `SKILL.md`. PaperSpine uses `references/` and
 
 ### Codex
 
-Clone or copy this repository into your Codex skills directory as `paper-spine`:
+Clone or copy this repository into your Codex skills directory as `paper-spine`. The default Codex skills directory is usually `~/.codex/skills`.
+
+macOS/Linux:
 
 ```bash
-git clone https://github.com/WUBING2023/PaperSpine.git "$CODEX_HOME/skills/paper-spine"
+git clone https://github.com/WUBING2023/PaperSpine.git ~/.codex/skills/paper-spine
 ```
 
-Then invoke it with `$paper-spine`:
+Windows PowerShell:
+
+```powershell
+git clone https://github.com/WUBING2023/PaperSpine.git "$HOME\.codex\skills\paper-spine"
+```
+
+If you use a custom `CODEX_HOME`, install to:
+
+```text
+<CODEX_HOME>/skills/paper-spine
+```
+
+Restart Codex after installation so the new skill is loaded. Then invoke it with `$paper-spine`:
 
 ```text
 Use $paper-spine to diagnose and rewrite my manuscript for a target journal.
@@ -63,6 +77,23 @@ Claude Code may also invoke the skill automatically when your request matches th
 ### Claude.ai
 
 Zip the `paper-spine` folder itself, with `SKILL.md` directly inside that folder, then upload it through Claude's Skills settings. Keep the folder structure intact so `references/` and `scripts/` remain available.
+
+## Troubleshooting
+
+If Codex does not recognize the skill:
+
+1. Check that this file exists: `~/.codex/skills/paper-spine/SKILL.md`.
+2. Check that `references/` and `scripts/` are next to `SKILL.md`, not one folder deeper.
+3. Restart Codex after copying or cloning the skill.
+4. Invoke the skill explicitly with `$paper-spine`.
+
+Common mistake: downloading the GitHub ZIP and placing the extracted outer folder directly under `skills/`. Make sure the final layout is:
+
+```text
+~/.codex/skills/paper-spine/SKILL.md
+~/.codex/skills/paper-spine/references/
+~/.codex/skills/paper-spine/scripts/
+```
 
 ## Quick Start
 
