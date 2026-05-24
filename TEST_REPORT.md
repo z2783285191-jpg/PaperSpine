@@ -1,10 +1,10 @@
-# PaperSpine v2 Local Hardening Test Report
+# PaperSpine v3 Local Hardening Test Report
 
 Status: local release-candidate hardening for the `dist/` release layout.
 
 ## Scope
 
-This report covers local validation of the PaperSpine v2 skill suite after the
+This report covers local validation of the PaperSpine v3 skill suite after the
 Claude Code-compatible single-layout change and the latest writing-quality
 hardening pass.
 

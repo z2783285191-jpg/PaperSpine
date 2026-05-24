@@ -471,7 +471,7 @@ def print_centered_box(lines: list[str], width: int, accent: str = "38;5;208") -
 
 def print_welcome_screen(ui_language: str, wait: bool = False) -> None:
     if not sys.stdout.isatty():
-        print("PaperSpine v2")
+        print("PaperSpine v3")
         print(tr(ui_language, "welcome"))
         print(tr(ui_language, "flowline"))
         return
@@ -515,7 +515,7 @@ def print_welcome_screen(ui_language: str, wait: bool = False) -> None:
         ]
     )
     print()
-    print(pad_ansi(ansi("PaperSpine v2", accent), width))
+    print(pad_ansi(ansi("PaperSpine v3", accent), width))
     print()
     for line in lines:
         print(pad_ansi(line, width))
