@@ -50,6 +50,7 @@ class SkillStructureTests(unittest.TestCase):
             "src/scripts/citation_quality_audit.py",
             "src/scripts/structured_review.py",
             "src/scripts/translate_guard.py",
+            "src/scripts/humanize_check.py",
             "dist/paperspine_version.json",
             "src/references/local-reference-ingestion.md",
             "src/references/citation-support-bank.md",

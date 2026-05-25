@@ -185,6 +185,12 @@ class SuiteHardeningTests(unittest.TestCase):
                 "dist/openclaw/skills/paper-spine/scripts/structured_review.py",
                 "dist/openclaw/skills/paper-spine-audit/scripts/structured_review.py",
             ],
+            "src/scripts/humanize_check.py": [
+                "dist/claude/skills/paper-spine-humanize/scripts/humanize_check.py",
+                "dist/codex/paper-spine/scripts/humanize_check.py",
+                "dist/codex/skills/paper-spine-humanize/scripts/humanize_check.py",
+                "dist/openclaw/skills/paper-spine-humanize/scripts/humanize_check.py",
+            ],
             "src/scripts/translate_guard.py": [
                 "dist/claude/skills/paper-spine-translate/scripts/translate_guard.py",
                 "dist/codex/paper-spine/scripts/translate_guard.py",

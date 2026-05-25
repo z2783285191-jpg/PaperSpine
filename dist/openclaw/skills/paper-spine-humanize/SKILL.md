@@ -33,6 +33,35 @@ Apply the matching tier's rules throughout all writing phases.  These are
 writing constraints enforced during generation — not a checklist to run after
 the fact.
 
+## Required Output: humanize_matrix.md
+
+During writing, produce `paper_rewriting_output/humanize_matrix.md` as a
+teaching artifact.  Every humanization change must be recorded in this matrix,
+not applied silently:
+
+| Row ID | Manuscript Unit | AI Pattern Found | Detection Dimension | Severity | Applied Change | Expected Effect | Teaching Note |
+|--------|----------------|------------------|---------------------|----------|---------------|-----------------|---------------|
+
+- **Manuscript Unit**: paragraph number or section name
+- **AI Pattern Found**: the specific AI feature detected (e.g. "3 consecutive sentences 18-22 chars", "paragraphs all follow claim-explanation-summary")
+- **Detection Dimension**: one of the 5 CNKI 2026 dimensions (sentence structure / paragraph similarity / information density / connector frequency / term-context matching)
+- **Severity**: High / Medium / Low — impact on detection score
+- **Applied Change**: what specific change was made
+- **Expected Effect**: which dimension score this reduces
+- **Teaching Note**: why this pattern triggers detectors
+
+The matrix must be written row by row during writing, not after the fact.
+Each paragraph that undergoes humanization gets at least one row.
+
+## Verification
+
+```bash
+python scripts/humanize_check.py paper_rewriting_output --markdown --write
+```
+
+Produces `paper_rewriting_output/humanize_report.md`.  Checks matrix coverage
+against total paragraphs, scans for remaining AI patterns, and flags gaps.
+
 ## Integration
 
 This branch is called internally by rewrite and build.  Users do not invoke it
