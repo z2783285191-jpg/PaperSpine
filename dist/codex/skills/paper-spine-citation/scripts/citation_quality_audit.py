@@ -147,6 +147,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--timeout", type=int, default=30)
     parser.add_argument("--delay", type=float, default=1.0)
     parser.add_argument("--no-api", action="store_true", help="Skip API calls; analyze structure only")
+    parser.add_argument("--max-dois", type=int, default=30, help="Maximum DOIs to verify via API (default: 30)")
     return parser.parse_args()
 
 
@@ -252,7 +253,7 @@ def compute_recency_score(year: str | None, current_year: int = 2026) -> int:
 # main audit logic
 # ---------------------------------------------------------------------------
 
-def audit_citations(output_dir: Path, no_api: bool, timeout: int, delay: float) -> CitationQualityReport:
+def audit_citations(output_dir: Path, no_api: bool, timeout: int, delay: float, max_dois: int = 30) -> CitationQualityReport:
     config_path = output_dir / "paper_spine_config.json"
     config = {}
     if config_path.exists():
@@ -270,6 +271,7 @@ def audit_citations(output_dir: Path, no_api: bool, timeout: int, delay: float) 
     if not records:
         return report
 
+    records = records[:max_dois]
     for record in records:
         entry = CitationQualityEntry(
             candidate_id=record["candidate_id"],
@@ -468,7 +470,7 @@ def main() -> int:
         print(f"Output directory not found: {out_dir}", file=sys.stderr)
         return 2
 
-    report = audit_citations(out_dir, args.no_api, args.timeout, args.delay)
+    report = audit_citations(out_dir, args.no_api, args.timeout, args.delay, args.max_dois)
 
     if args.json:
         print(json.dumps({
