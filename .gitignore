@@ -41,3 +41,4 @@ Thumbs.db
 *.xlsx
 *.pdf
 !tests/fixtures/*.pdf
+paper-spine-promo-video/
