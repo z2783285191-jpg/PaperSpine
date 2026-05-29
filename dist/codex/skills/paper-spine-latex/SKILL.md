@@ -44,11 +44,20 @@ unless rewrite/build outputs require it.
 - If compilation fails despite an available engine, keep the `.tex`, write the
   first fatal error to `latex_report.md`, and do not claim the artifact check
   passes.
-- If generating Word for Chinese output, use pandoc with explicit UTF-8:
-  `pandoc main.tex -o paper.docx --from latex --to docx --pdf-engine=xelatex`.
-  Do NOT use intermediate plain-text steps that strip encoding.
+- If generating Word output, use pandoc from the `final_paper/` directory:
+  ```bash
+  cd final_paper
+  pandoc main.tex -o paper.docx --from latex --to docx \
+    --resource-path=. --extract-media=./media
+  ```
+  - `--resource-path=.` resolves `\includegraphics{figures/...}` paths
+  - `--extract-media=./media` embeds images into the docx
+  - Without these flags, pandoc silently drops images and produces a blank docx
+  - Run from `final_paper/` so relative paths in `.tex` resolve correctly
+  - Do NOT use intermediate plain-text steps that strip encoding
 - Run `scripts/word_guard.py final_paper/paper.docx --markdown --output
   paper_rewriting_output/word_report.md` and fix failures before presenting
-  the Word file as usable. Pay special attention to Chinese encoding warnings.
+  the Word file as usable. If word_guard reports 0 paragraphs, check that
+  images are in supported formats (PNG/JPG) and the `figures/` directory exists.
 
 Read `references/latex-source-control.md` before structural LaTeX edits.

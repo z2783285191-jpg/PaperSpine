@@ -63,6 +63,7 @@ def check_docx(path: Path, min_chars: int) -> WordGuardResult:
     if path.suffix.lower() != ".docx":
         findings.append("file extension is not .docx")
 
+    names: set[str] = set()
     try:
         with zipfile.ZipFile(path) as docx:
             names = set(docx.namelist())
@@ -79,7 +80,15 @@ def check_docx(path: Path, min_chars: int) -> WordGuardResult:
     if len(text) < min_chars:
         findings.append(f"text is too short: {len(text)} chars < {min_chars}")
     if paragraph_count == 0:
-        findings.append("no non-empty paragraphs found")
+        findings.append("no non-empty paragraphs found — docx may be empty or corrupted")
+        # Check if images exist but text was lost (broken image conversion)
+        has_images = any(name.startswith("word/media/") for name in names)
+        if has_images:
+            findings.append(
+                "Images found in docx but no text — pandoc image conversion likely failed. "
+                "Verify: (1) images are PNG/JPG format, (2) `--resource-path` and `--extract-media` flags used, "
+                "(3) pandoc ran from the `final_paper/` directory so relative paths resolve."
+            )
     for pattern in PLACEHOLDER_PATTERNS:
         if re.search(pattern, text, flags=re.IGNORECASE):
             findings.append(f"unresolved placeholder pattern found: {pattern}")
