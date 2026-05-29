@@ -189,57 +189,37 @@ def sync_dist_only() -> None:
     print(f"Dist root: {dist_root}")
 
 
-PAPERSPINE_INTERNAL_SKILLS = {
-    "paper-spine", "paper-spine-ui", "paper-spine-intake",
-    "paper-spine-research", "paper-spine-citation",
-    "paper-spine-rewrite", "paper-spine-build",
-    "paper-spine-humanize", "paper-spine-latex",
-    "paper-spine-translate", "paper-spine-audit",
-    "paper-spine-update",
-}
+PAPERSPINE_INTERNAL_SKILLS: set[str] = set()
 
 
 def sync_skill_overrides(claude_settings_dir: Path) -> None:
-    """Hide internal PaperSpine skills from the slash-command menu.
-
-    Writes skillOverrides to the user's Claude Code settings so that internal
-    skills (research, citation, rewrite, etc.) do not clutter the / autocomplete.
-    User-facing skills (paper-spine, paper-spine-update) and explicit commands
-    (/paperspine, /paper-spine) remain visible.
-
-    Existing settings are preserved — only PaperSpine entries are touched.
-    """
+    """Remove stale PaperSpine skillOverrides. All skills are now visible."""
     settings_path = claude_settings_dir / "settings.json"
-    existing: dict = {}
-    if settings_path.exists():
-        try:
-            existing = json.loads(settings_path.read_text(encoding="utf-8"))
-        except json.JSONDecodeError:
-            existing = {}
+    if not settings_path.exists():
+        return
+    try:
+        existing = json.loads(settings_path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return
 
     overrides = existing.get("skillOverrides", {})
     if isinstance(overrides, list):
-        overrides = {}
-
-    changed = False
-    for skill in PAPERSPINE_INTERNAL_SKILLS:
-        if overrides.get(skill) != "off":
-            overrides[skill] = "off"
-            changed = True
-
-    # Remove stale PaperSpine overrides no longer in the current list
-    stale = [k for k in overrides if k.startswith("paper-spine") and k not in PAPERSPINE_INTERNAL_SKILLS]
-    for skill in stale:
-        del overrides[skill]
-        changed = True
-
-    if not changed and "skillOverrides" in existing:
         return
 
-    existing["skillOverrides"] = overrides
+    stale = [k for k in overrides if k.startswith("paper-spine")]
+    if not stale:
+        return
+
+    for skill in stale:
+        del overrides[skill]
+    if not overrides:
+        existing.pop("skillOverrides", None)
+    else:
+        existing["skillOverrides"] = overrides
+
     settings_path.parent.mkdir(parents=True, exist_ok=True)
     settings_path.write_text(json.dumps(existing, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    print(f"Updated skillOverrides in {settings_path}: {len(PAPERSPINE_INTERNAL_SKILLS)} internal skills hidden")
+    print(f"Cleaned {len(stale)} stale PaperSpine skillOverrides")
 
 
 def write_install_state(args: argparse.Namespace) -> None:

@@ -91,21 +91,4 @@ cat > "$CONFIG_HOME/install_state.json" << STATE
 }
 STATE
 
-# Hide internal PaperSpine skills from Claude Code / menu
-SETTINGS="$HOME/.claude/settings.json"
-python3 -c "
-import json, os
-path = os.path.expanduser('$SETTINGS')
-data = {}
-if os.path.exists(path):
-    try: data = json.load(open(path))
-    except: pass
-data.setdefault('skillOverrides', {})
-for skill in ['paper-spine','paper-spine-ui','paper-spine-intake','paper-spine-research','paper-spine-citation','paper-spine-rewrite','paper-spine-build','paper-spine-humanize','paper-spine-latex','paper-spine-translate','paper-spine-audit','paper-spine-update']:
-    data['skillOverrides'][skill] = 'off'
-os.makedirs(os.path.dirname(path), exist_ok=True)
-json.dump(data, open(path, 'w'), ensure_ascii=False, indent=2)
-print(f'Updated skillOverrides in {path}')
-" 2>/dev/null || echo "Warning: could not update skillOverrides (Python3 required)"
-
 echo "PaperSpine install complete. Restart Codex, Claude Code, or OpenClaw before use."

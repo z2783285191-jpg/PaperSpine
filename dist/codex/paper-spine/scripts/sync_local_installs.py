@@ -189,14 +189,7 @@ def sync_dist_only() -> None:
     print(f"Dist root: {dist_root}")
 
 
-PAPERSPINE_INTERNAL_SKILLS = {
-    "paper-spine", "paper-spine-ui", "paper-spine-intake",
-    "paper-spine-research", "paper-spine-citation",
-    "paper-spine-rewrite", "paper-spine-build",
-    "paper-spine-humanize", "paper-spine-latex",
-    "paper-spine-translate", "paper-spine-audit",
-    "paper-spine-update",
-}
+PAPERSPINE_INTERNAL_SKILLS: set[str] = set()
 
 
 def sync_skill_overrides(claude_settings_dir: Path) -> None:

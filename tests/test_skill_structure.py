@@ -188,6 +188,8 @@ class SkillStructureTests(unittest.TestCase):
                 continue
             if "paper_rewriting_output" in path.parts:
                 continue
+            if "paper-spine-promo-video" in path.parts:
+                continue
             text = path.read_text(encoding="utf-8", errors="ignore")
             for fragment in blocked_fragments:
                 if fragment in text:

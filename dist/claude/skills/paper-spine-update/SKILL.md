@@ -36,37 +36,8 @@ The updater must:
 - preserve `~/.paperspine/config.json`, including UI language preferences,
 - never touch project artifacts such as `paper_rewriting_output/`,
 - print a clear already-latest message when no update is needed,
-- after installing or updating, run `sync_skill_overrides` logic to ensure
-  internal PaperSpine skills remain hidden from the `/` slash-command menu.
-
-## Post-Update skillOverrides
-
-After every update, verify that internal skills are hidden from the
-slash-command menu.  Run:
-
-```powershell
-# Windows — PowerShell
-$settingsPath = Join-Path $HOME ".claude\settings.json"
-$settings = if (Test-Path $settingsPath) { $raw = Get-Content $settingsPath -Raw -Encoding UTF8 | ConvertFrom-Json; $hash = @{}; $raw.PSObject.Properties | ForEach-Object { $hash[$_.Name] = $_.Value }; $hash } else { @{} }
-if (-not $settings.ContainsKey("skillOverrides")) { $settings["skillOverrides"] = @{} }
-foreach ($skill in @("paper-spine")) {
-  $settings["skillOverrides"][$skill] = "off"
-}
-$settings | ConvertTo-Json -Depth 4 | Set-Content $settingsPath -Encoding UTF8
-```
-
-On Mac/Linux, use the same `sync_local_installs.py --dist-only` command which
-includes `sync_skill_overrides()` automatically.
-
-Or manually — `~/.claude/settings.json` should contain:
-
-```json
-{
-  "skillOverrides": {
-    "paper-spine": "off"
-  }
-}
-```
+- after installing or updating, remove any stale `skillOverrides` entries for
+  PaperSpine skills (the sync script does this automatically).
 
 ## Advanced Usage
 

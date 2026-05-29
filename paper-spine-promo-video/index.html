@@ -1,0 +1,598 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PaperSpine - HyperFrames Promo</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <style>
+      :root {
+        --bg: #101319;
+        --surface: #171d26;
+        --surface-2: #1d2632;
+        --text: #f3efe7;
+        --muted: #9aa6b2;
+        --accent: #f6b73c;
+        --support: #4fd1c5;
+        --line: rgba(243, 239, 231, 0.14);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        width: 1920px;
+        height: 1080px;
+        overflow: hidden;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Microsoft YaHei", "Noto Sans SC", "PingFang SC", "Segoe UI", Arial, sans-serif;
+      }
+
+      [data-composition-id="paperspine-promo"] {
+        width: 1920px;
+        height: 1080px;
+        position: relative;
+        overflow: hidden;
+        background:
+          linear-gradient(90deg, rgba(243, 239, 231, 0.045) 1px, transparent 1px) 0 0 / 80px 80px,
+          linear-gradient(rgba(243, 239, 231, 0.035) 1px, transparent 1px) 0 0 / 80px 80px,
+          radial-gradient(circle at 18% 20%, rgba(246, 183, 60, 0.16), transparent 28%),
+          radial-gradient(circle at 82% 76%, rgba(79, 209, 197, 0.13), transparent 28%),
+          var(--bg);
+      }
+
+      .ambient {
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .ambient .ghost {
+        position: absolute;
+        color: rgba(243, 239, 231, 0.035);
+        font-size: 190px;
+        font-weight: 900;
+        letter-spacing: 0;
+        white-space: nowrap;
+      }
+
+      .ghost-a {
+        top: 80px;
+        left: -60px;
+      }
+
+      .ghost-b {
+        right: -90px;
+        bottom: 130px;
+      }
+
+      .rule {
+        position: absolute;
+        background: var(--line);
+      }
+
+      .rule.horizontal {
+        left: 120px;
+        right: 120px;
+        top: 160px;
+        height: 1px;
+      }
+
+      .rule.vertical {
+        top: 120px;
+        bottom: 120px;
+        left: 1440px;
+        width: 1px;
+      }
+
+      .scene {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 112px 128px 148px;
+        opacity: 0;
+        pointer-events: none;
+      }
+
+      .scene.active {
+        pointer-events: auto;
+      }
+
+      .kicker {
+        color: var(--accent);
+        font-size: 30px;
+        font-weight: 800;
+        letter-spacing: 0;
+        margin-bottom: 26px;
+      }
+
+      .headline {
+        max-width: 1280px;
+        margin: 0;
+        font-size: 98px;
+        line-height: 1.08;
+        font-weight: 900;
+        letter-spacing: 0;
+      }
+
+      .headline strong,
+      .accent {
+        color: var(--accent);
+      }
+
+      .support {
+        color: var(--support);
+      }
+
+      .subline {
+        max-width: 1020px;
+        margin: 34px 0 0;
+        color: var(--muted);
+        font-size: 38px;
+        line-height: 1.45;
+        font-weight: 400;
+      }
+
+      .split {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+        gap: 80px;
+        align-items: center;
+      }
+
+      .panel {
+        background: rgba(23, 29, 38, 0.84);
+        border: 1px solid var(--line);
+        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.34);
+      }
+
+      .target-panel {
+        padding: 44px;
+        display: grid;
+        gap: 22px;
+      }
+
+      .target-row {
+        display: grid;
+        grid-template-columns: 230px 1fr;
+        align-items: center;
+        gap: 24px;
+        min-height: 90px;
+        padding: 22px 24px;
+        background: var(--surface-2);
+        border-left: 8px solid var(--support);
+      }
+
+      .target-row b {
+        font-size: 28px;
+        color: var(--text);
+      }
+
+      .target-row span {
+        color: var(--muted);
+        font-size: 25px;
+        line-height: 1.35;
+      }
+
+      .choice-board {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 26px;
+        margin-top: 44px;
+      }
+
+      .choice {
+        min-height: 280px;
+        padding: 34px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+
+      .choice .tag {
+        color: var(--accent);
+        font-size: 24px;
+        font-weight: 800;
+      }
+
+      .choice h3 {
+        margin: 20px 0 0;
+        font-size: 38px;
+        line-height: 1.2;
+      }
+
+      .choice p {
+        margin: 22px 0 0;
+        color: var(--muted);
+        font-size: 25px;
+        line-height: 1.42;
+      }
+
+      .matrix {
+        margin-top: 42px;
+        width: 100%;
+        border: 1px solid var(--line);
+        background: rgba(23, 29, 38, 0.8);
+      }
+
+      .matrix-row {
+        display: grid;
+        grid-template-columns: 240px 1fr 1fr 1fr;
+        min-height: 92px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .matrix-row:last-child {
+        border-bottom: 0;
+      }
+
+      .matrix-cell {
+        padding: 22px 24px;
+        display: flex;
+        align-items: center;
+        color: var(--muted);
+        font-size: 24px;
+        line-height: 1.3;
+        border-right: 1px solid var(--line);
+      }
+
+      .matrix-cell:last-child {
+        border-right: 0;
+      }
+
+      .matrix-head .matrix-cell {
+        color: var(--text);
+        font-weight: 800;
+        background: rgba(246, 183, 60, 0.12);
+      }
+
+      .matrix-cell:first-child {
+        color: var(--accent);
+        font-weight: 800;
+      }
+
+      .pipeline {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 18px;
+        margin-top: 54px;
+      }
+
+      .step {
+        min-height: 170px;
+        padding: 26px;
+        background: var(--surface);
+        border: 1px solid var(--line);
+      }
+
+      .step .num {
+        color: var(--support);
+        font-size: 26px;
+        font-weight: 900;
+      }
+
+      .step h3 {
+        margin: 20px 0 0;
+        font-size: 32px;
+        line-height: 1.2;
+      }
+
+      .step p {
+        margin: 14px 0 0;
+        color: var(--muted);
+        font-size: 22px;
+        line-height: 1.35;
+      }
+
+      .feature-cloud {
+        margin-top: 42px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 18px;
+        max-width: 1480px;
+      }
+
+      .feature {
+        padding: 18px 24px;
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--text);
+        font-size: 28px;
+        font-weight: 700;
+      }
+
+      .feature.primary {
+        color: var(--bg);
+        background: var(--accent);
+        border-color: var(--accent);
+      }
+
+      .metric-stack {
+        position: absolute;
+        right: 132px;
+        top: 206px;
+        width: 360px;
+        display: grid;
+        gap: 20px;
+      }
+
+      .metric {
+        padding: 24px;
+        background: rgba(23, 29, 38, 0.9);
+        border: 1px solid var(--line);
+      }
+
+      .metric b {
+        display: block;
+        color: var(--accent);
+        font-size: 58px;
+        line-height: 1;
+      }
+
+      .metric span {
+        display: block;
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 22px;
+      }
+
+      .quote {
+        max-width: 1320px;
+        font-size: 72px;
+        line-height: 1.22;
+        font-weight: 900;
+      }
+
+      .subtitle-strip {
+        position: absolute;
+        left: 128px;
+        right: 128px;
+        bottom: 54px;
+        min-height: 70px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px 30px;
+        background: rgba(16, 19, 25, 0.86);
+        border: 1px solid rgba(243, 239, 231, 0.2);
+        color: var(--text);
+        font-size: 34px;
+        line-height: 1.28;
+        text-align: center;
+      }
+
+      .brand-mark {
+        position: absolute;
+        top: 44px;
+        left: 128px;
+        color: var(--text);
+        font-size: 28px;
+        font-weight: 900;
+      }
+
+      .brand-mark span {
+        color: var(--accent);
+      }
+
+      .time-mark {
+        position: absolute;
+        top: 48px;
+        right: 128px;
+        color: var(--muted);
+        font-size: 23px;
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      data-composition-id="paperspine-promo"
+      data-width="1920"
+      data-height="1080"
+      data-start="0"
+      data-duration="120"
+    >
+      <audio
+        id="narration"
+        data-start="0"
+        data-track-index="1"
+        src="assets/narration.mp3"
+        data-volume="1"
+      ></audio>
+
+      <div class="ambient">
+        <div class="ghost ghost-a">RATIONALE MATRIX</div>
+        <div class="ghost ghost-b">MOTIVATION DRIVEN</div>
+        <div class="rule horizontal"></div>
+        <div class="rule vertical"></div>
+      </div>
+
+      <div class="brand-mark">Paper<span>Spine</span></div>
+      <div class="time-mark">AI writing skill suite</div>
+
+      <section class="scene scene-1">
+        <div class="kicker">不是润色提示词</div>
+        <h1 class="headline">让 AI 先理解目标，再开始写作。</h1>
+        <p class="subline">PaperSpine 是面向论文、报告、竞赛材料的 motivation-driven skill suite。</p>
+      </section>
+
+      <section class="scene scene-2">
+        <div class="split">
+          <div>
+            <div class="kicker">自适应目标任务和领域</div>
+            <h2 class="headline">不是所有论文，都应该写成一个样子。</h2>
+            <p class="subline">先学习场景，再决定结构、论证和表达。</p>
+          </div>
+          <div class="target-panel panel">
+            <div class="target-row"><b>特定期刊</b><span>匹配投稿规范、栏目语气和论证密度</span></div>
+            <div class="target-row"><b>会议论文</b><span>突出贡献、实验可信度和相关工作边界</span></div>
+            <div class="target-row"><b>课程报告</b><span>兼顾作业要求、材料覆盖和可读性</span></div>
+            <div class="target-row"><b>竞赛材料</b><span>强化问题定义、方案路径和评审关注点</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="scene scene-3">
+        <div class="kicker">动机驱动</div>
+        <h2 class="headline">先问：这篇文章为什么值得写？</h2>
+        <div class="choice-board">
+          <div class="choice"><div><span class="tag">AI 生成</span><h3>多个 controlling motivation</h3></div><p>给出可比较的写作主线。</p></div>
+          <div class="choice"><div><span class="tag">用户选择</span><h3>确认真正想说服谁</h3></div><p>避免文章只是在堆段落。</p></div>
+          <div class="choice"><div><span class="tag">全程贯穿</span><h3>结构、证据、讨论都围绕它展开</h3></div><p>让论文有一个稳定的脊柱。</p></div>
+        </div>
+      </section>
+
+      <section class="scene scene-4">
+        <div class="kicker">授人以渔</div>
+        <h2 class="headline">不只给论文，也给出 AI 是怎么改的。</h2>
+        <div class="matrix">
+          <div class="matrix-row matrix-head">
+            <div class="matrix-cell">对象</div>
+            <div class="matrix-cell">为什么这样写</div>
+            <div class="matrix-cell">哪里需要加强</div>
+            <div class="matrix-cell">如何继续改进</div>
+          </div>
+          <div class="matrix-row">
+            <div class="matrix-cell">标题 / 摘要</div>
+            <div class="matrix-cell">建立问题、贡献和目标读者</div>
+            <div class="matrix-cell">避免空泛卖点</div>
+            <div class="matrix-cell">压实贡献和证据指向</div>
+          </div>
+          <div class="matrix-row">
+            <div class="matrix-cell">段落 / Claim</div>
+            <div class="matrix-cell">解释逻辑推进顺序</div>
+            <div class="matrix-cell">识别缺证据的断言</div>
+            <div class="matrix-cell">补引用、重组段落、修连接</div>
+          </div>
+          <div class="matrix-row">
+            <div class="matrix-cell">图表 / 讨论</div>
+            <div class="matrix-cell">服务动机而不是堆结果</div>
+            <div class="matrix-cell">补足解释和局限</div>
+            <div class="matrix-cell">让读者看懂贡献边界</div>
+          </div>
+        </div>
+      </section>
+
+      <section class="scene scene-5">
+        <div class="kicker">透明、可学习、可迭代</div>
+        <h2 class="headline">得到结果，也理解判断标准。</h2>
+        <p class="subline">你能看到 AI 如何写、如何改、如何判断一篇文章更有说服力。</p>
+        <div class="metric-stack">
+          <div class="metric"><b>why</b><span>每一节为什么存在</span></div>
+          <div class="metric"><b>what</b><span>每个 claim 缺什么支撑</span></div>
+          <div class="metric"><b>how</b><span>下一轮如何继续优化</span></div>
+        </div>
+      </section>
+
+      <section class="scene scene-6">
+        <div class="kicker">完整工作流</div>
+        <h2 class="headline">从资料到成稿，不跳过关键推理。</h2>
+        <div class="pipeline">
+          <div class="step"><span class="num">01</span><h3>读任务</h3><p>本地材料、模板、目标要求优先。</p></div>
+          <div class="step"><span class="num">02</span><h3>学场景</h3><p>研究目标领域和强例。</p></div>
+          <div class="step"><span class="num">03</span><h3>定动机</h3><p>AI 提案，用户确认。</p></div>
+          <div class="step"><span class="num">04</span><h3>写矩阵</h3><p>建立 rationale 和改进路径。</p></div>
+          <div class="step"><span class="num">05</span><h3>产出并审计</h3><p>写作、排版、检查、翻译。</p></div>
+        </div>
+      </section>
+
+      <section class="scene scene-7">
+        <div class="kicker">功能不止写作</div>
+        <h2 class="headline">围绕真实论文流程做完整配套。</h2>
+        <div class="feature-cloud">
+          <div class="feature primary">降 AI 率</div>
+          <div class="feature">Word 文档生成</div>
+          <div class="feature">LaTeX / PDF 组装</div>
+          <div class="feature">引用支持库</div>
+          <div class="feature">研究场景分析</div>
+          <div class="feature">强例学习</div>
+          <div class="feature">中文翻译包</div>
+          <div class="feature">审稿式审计</div>
+          <div class="feature">图表标题优化</div>
+          <div class="feature">本地资料优先</div>
+          <div class="feature">Codex / Claude Code / OpenClaw</div>
+          <div class="feature">更新维护流程</div>
+        </div>
+      </section>
+
+      <section class="scene scene-8">
+        <div class="kicker">持续更新</div>
+        <div class="quote">我的目标很简单：把 AI 变成一个透明、可学习、可迭代的写作伙伴。</div>
+        <p class="subline">PaperSpine 会继续更新，也欢迎大家继续提出反馈，一起把它做得更好。</p>
+      </section>
+
+      <div id="subtitle" class="subtitle-strip"></div>
+    </div>
+
+    <script>
+      window.__timelines = window.__timelines || {};
+
+      const tl = gsap.timeline({ paused: true });
+      const scenes = [
+        { selector: ".scene-1", start: 0, duration: 14 },
+        { selector: ".scene-2", start: 14, duration: 22 },
+        { selector: ".scene-3", start: 36, duration: 19 },
+        { selector: ".scene-4", start: 55, duration: 25 },
+        { selector: ".scene-5", start: 80, duration: 12 },
+        { selector: ".scene-6", start: 92, duration: 10 },
+        { selector: ".scene-7", start: 102, duration: 11 },
+        { selector: ".scene-8", start: 113, duration: 7 },
+      ];
+
+      gsap.set(".scene", { opacity: 0 });
+      gsap.set(".scene-1", { opacity: 1 });
+
+      scenes.forEach((scene) => {
+        const end = scene.start + scene.duration;
+        tl.set(scene.selector, { opacity: 1 }, scene.start);
+        tl.from(`${scene.selector} .kicker`, { y: 34, opacity: 0, duration: 0.45, ease: "power3.out" }, scene.start + 0.15);
+        tl.from(`${scene.selector} .headline, ${scene.selector} .quote`, { y: 54, opacity: 0, duration: 0.62, ease: "power3.out" }, scene.start + 0.28);
+        tl.from(`${scene.selector} .subline`, { y: 36, opacity: 0, duration: 0.5, ease: "power3.out" }, scene.start + 0.55);
+        tl.to(scene.selector, { opacity: 0, duration: 0.45, ease: "power2.in" }, end - 0.45);
+      });
+
+      tl.from(".target-row", { x: 80, opacity: 0, duration: 0.45, stagger: 0.16, ease: "power3.out" }, 15.2);
+      tl.from(".choice", { y: 70, opacity: 0, duration: 0.55, stagger: 0.18, ease: "power3.out" }, 37.4);
+      tl.from(".matrix-row", { x: -70, opacity: 0, duration: 0.42, stagger: 0.18, ease: "power3.out" }, 57.0);
+      tl.from(".metric", { x: 70, opacity: 0, duration: 0.42, stagger: 0.14, ease: "power3.out" }, 83.0);
+      tl.from(".step", { y: 58, opacity: 0, duration: 0.42, stagger: 0.1, ease: "power3.out" }, 94.0);
+      tl.from(".feature", { y: 38, opacity: 0, duration: 0.34, stagger: 0.05, ease: "power3.out" }, 104.0);
+
+      tl.to(".ghost-a", { x: 140, duration: 120, ease: "none" }, 0);
+      tl.to(".ghost-b", { x: -130, duration: 120, ease: "none" }, 0);
+
+      const subtitles = [
+        [0, 8, "这不是一个简单的论文润色提示词。PaperSpine 是为论文和报告写作设计的一套 skill。"],
+        [8, 14, "它的核心思路，是让 AI 先理解目标，再开始写作。"],
+        [14, 25, "面对不同领域、不同期刊、会议、课程报告和竞赛材料，PaperSpine 会先阅读任务要求、模板、参考文献和强例。"],
+        [25, 36, "它会学习这个场景真正需要什么，再生成适合目标的结构、论证和表达。"],
+        [36, 45, "第二点，是动机驱动。论文最重要的不是把段落堆满，而是弄清楚为什么要写这篇文章。"],
+        [45, 55, "这个动机可以由 AI 提供多个方案，用户选择并确认，然后整个写作过程围绕它展开。"],
+        [55, 64, "第三点，也是我最在意的：PaperSpine 不是授人以鱼，而是授人以渔。"],
+        [64, 74, "它会输出写作 rationale 和 AI 改进矩阵，告诉你每一节为什么这样写，哪些 claim 需要证据。"],
+        [74, 80, "标题、摘要、图表说明和讨论部分应该如何改进，也会被拆开说明。"],
+        [80, 92, "你得到的不只是结果，也能理解 AI 到底怎么写、怎么改、怎么判断一篇文章更有说服力。"],
+        [92, 102, "它包含研究场景分析、引用支持库、LaTeX 和 PDF 组装、Word 文档生成、中文翻译包和审稿式审计。"],
+        [102, 113, "也支持降 AI 率、多平台适配、本地资料优先读取，以及后续更新维护流程。"],
+        [113, 120, "我的目标很简单：把 AI 变成一个透明、可学习、可迭代的写作伙伴。"],
+      ];
+
+      const subtitle = document.getElementById("subtitle");
+      subtitles.forEach(([start, end, text]) => {
+        tl.set(subtitle, { textContent: text, opacity: 1 }, start);
+        tl.set(subtitle, { opacity: 0 }, end);
+      });
+
+      window.__timelines["paperspine-promo"] = tl;
+    </script>
+  </body>
+</html>

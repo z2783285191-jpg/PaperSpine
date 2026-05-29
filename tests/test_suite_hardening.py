@@ -359,23 +359,21 @@ class SuiteHardeningTests(unittest.TestCase):
             self.assertFalse((base / "codex" / "skills" / "PaperSpineV2").exists())
             self.assertFalse((base / "claude" / "skills" / "PaperSpineV2" / "skills" / "paper-spine" / "SKILL.md").exists())
 
-    def test_sync_skill_overrides_writes_expected_skills(self) -> None:
+    def test_sync_skill_overrides_cleans_stale_entries(self) -> None:
         import tempfile
         sys.path.insert(0, str(ROOT / "src" / "scripts"))
         from sync_local_installs import sync_skill_overrides, PAPERSPINE_INTERNAL_SKILLS
         with tempfile.TemporaryDirectory() as tmp:
             settings_dir = Path(tmp) / ".claude"
+            settings_dir.mkdir(parents=True)
+            stale = {"skillOverrides": {"paper-spine": "off", "paper-spine-research": "off"}, "model": "test"}
+            (settings_dir / "settings.json").write_text(json.dumps(stale))
             sync_skill_overrides(settings_dir)
-            settings = json.loads((settings_dir / "settings.json").read_text(encoding="utf-8"))
-            self.assertIn("skillOverrides", settings)
-            for skill in PAPERSPINE_INTERNAL_SKILLS:
-                self.assertEqual(settings["skillOverrides"].get(skill), "off", skill)
-            # All suite skills should be hidden
-            self.assertEqual(settings["skillOverrides"].get("paper-spine"), "off")
-            self.assertEqual(settings["skillOverrides"].get("paper-spine-update"), "off")
-            self.assertEqual(settings["skillOverrides"].get("paper-spine-research"), "off")
+            updated = json.loads((settings_dir / "settings.json").read_text(encoding="utf-8"))
+            self.assertNotIn("skillOverrides", updated)  # all stale entries removed, key also removed
+            self.assertEqual(updated["model"], "test")
 
-    def test_sync_skill_overrides_preserves_existing_settings(self) -> None:
+    def test_sync_skill_overrides_noop_on_no_paperspine_overrides(self) -> None:
         import tempfile
         sys.path.insert(0, str(ROOT / "src" / "scripts"))
         from sync_local_installs import sync_skill_overrides
@@ -388,7 +386,6 @@ class SuiteHardeningTests(unittest.TestCase):
             updated = json.loads((settings_dir / "settings.json").read_text(encoding="utf-8"))
             self.assertEqual(updated["permissions"]["defaultMode"], "acceptEdits")
             self.assertEqual(updated["model"], "claude-sonnet-4-6")
-            self.assertIn("skillOverrides", updated)
 
     def test_sync_script_does_not_delete_source_when_desktop_root_is_repo_root(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
