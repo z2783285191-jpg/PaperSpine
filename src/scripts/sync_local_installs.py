@@ -10,7 +10,6 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[2]
 DIST_CODEX_SKILL = ROOT / "dist" / "codex" / "paper-spine"
 DIST_CODEX_SKILLS = ROOT / "dist" / "codex" / "skills"
@@ -177,7 +176,13 @@ def sync_dist_only() -> None:
     dist_root = ROOT / "dist"
 
     synced = 0
-    for src_file in list(src_scripts.glob("*.py")) + list(src_scripts.glob("*.sh")) + list(src_references.glob("*.md")):
+    source_files = (
+        list(src_scripts.glob("*.py"))
+        + list(src_scripts.glob("*.sh"))
+        + list(src_scripts.glob("*.ps1"))
+        + list(src_references.glob("*.md"))
+    )
+    for src_file in source_files:
         for dist_copy in dist_root.rglob(src_file.name):
             if dist_copy.is_file():
                 shutil.copy2(src_file, dist_copy)

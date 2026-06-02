@@ -32,10 +32,8 @@ PaperSpine/
         paper-spine-translate/
         paper-spine-humanize/
         paper-spine-update/
-      commands/                 # Claude Code slash-command helpers
+      commands/                 # Claude Code slash-command entry point
         paperspine.md
-        paper-spine.md
-        paperspine-legacy.md
     openclaw/
       skills/                   # OpenClaw flat skill suite
   src/

@@ -10,13 +10,13 @@ matrix, then writes/rewrites with LaTeX/PDF output.
 ## Repository Shape
 
 - `dist/claude/skills/*`: Claude Code flat skill suite (12 skills)
-- `dist/claude/commands/*.md`: Claude Code slash commands (3 commands)
+- `dist/claude/commands/*.md`: Claude Code slash command (`paperspine.md`, single entry point)
 - `dist/codex/skills/*`: Codex flat skill suite
 - `dist/codex/paper-spine`: legacy Codex bundled fallback
 - `dist/openclaw/skills/*`: OpenClaw flat skill suite
 - `src/scripts/*`: shared deterministic scripts (standard library only)
 - `.claude-plugin/*`: Claude Code plugin metadata
-- `tests/*`: 123 tests
+- `tests/*`: 142 tests
 
 ## Suite Skills
 
@@ -45,7 +45,7 @@ Canonical source: `dist/paperspine_version.json`.  Auto-propagated to
 - Keep dist copies synchronized across Claude/Codex/OpenClaw
 - README.md and README.zh-CN.md must stay content-equivalent
 - Do not push to GitHub unless explicitly asked
-- Run `python -m pytest tests` before claiming ready (expect 123 passed)
+- Run `python -m pytest tests` before claiming ready (expect 142 passed)
 
 ## Sync Commands
 

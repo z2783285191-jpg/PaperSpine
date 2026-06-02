@@ -32,10 +32,8 @@ PaperSpine/
         paper-spine-translate/
         paper-spine-humanize/
         paper-spine-update/
-      commands/                 # Claude Code slash-command 辅助入口
+      commands/                 # Claude Code slash-command 入口
         paperspine.md
-        paper-spine.md
-        paperspine-legacy.md
     openclaw/
       skills/                   # OpenClaw 扁平 skill suite
   src/

@@ -15,7 +15,7 @@ The supported interaction is a real terminal window launched by
 hidden tool surface when the host cannot expose stdin.
 
 In Claude Code, `/paperspine` must call this branch automatically when config is
-missing. `/paperspine-legacy` is only a manual fallback.
+missing.
 
 In Codex, use the same launcher when PowerShell is available:
 
