@@ -1,6 +1,6 @@
 ---
 name: paper-spine
-description: Internal orchestrator — users should use /paperspine to start a full workflow.
+description: Write, rewrite, or build a paper or report (journal, conference, report, review, competition) end to end, then output LaTeX/PDF/Word. The main PaperSpine entry point that orchestrates every step.
 ---
 
 # PaperSpine Orchestrator

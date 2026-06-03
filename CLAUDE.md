@@ -17,7 +17,7 @@ matrix, then writes/rewrites with LaTeX/PDF output.
 - `src/scripts/*`: shared deterministic scripts (standard library only)
 - `src/references/*`: shared workflow reference docs (single source; includes `interactive-intake.md`)
 - `.claude-plugin/*`: Claude Code plugin metadata
-- `tests/*`: 162 tests
+- `tests/*`: 164 tests
 
 ## Suite Skills
 
@@ -46,7 +46,7 @@ Canonical source: `dist/paperspine_version.json`.  Auto-propagated to
 - Keep dist copies synchronized across Claude/Codex/OpenClaw
 - README.md (Chinese) and README.en.md (English) must stay content-equivalent
 - Do not push to GitHub unless explicitly asked
-- Run `python -m pytest tests` before claiming ready (expect 162 passed)
+- Run `python -m pytest tests` before claiming ready (expect 164 passed)
 - Single source of truth: edit shared scripts in `src/scripts/`, references in
   `src/references/`, and each skill's `SKILL.md` in its **Claude** dist copy
   (`dist/claude/skills/<skill>/SKILL.md`); `sync_local_installs.py --dist-only`

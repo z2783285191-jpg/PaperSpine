@@ -140,6 +140,32 @@ class CrossPlatformLauncherTests(unittest.TestCase):
         self.assertIn("chcp 65001", wiz, "Windows UTF-8 codepage")
 
 
+class OrchestratorDiscoverabilityTests(unittest.TestCase):
+    """The main skill must be intent-discoverable in Codex (no anti-trigger desc)."""
+
+    def test_orchestrator_description_is_trigger_rich(self) -> None:
+        desc = frontmatter_value(
+            ROOT / "dist" / "claude" / "skills" / "paper-spine" / "SKILL.md", "description"
+        )
+        low = desc.lower()
+        # Must read like a task trigger, not an internal note that hides it.
+        self.assertNotIn("internal orchestrator", low)
+        self.assertNotIn("users should use /paperspine", low)
+        self.assertTrue(
+            any(verb in low for verb in ("write", "rewrite", "build")),
+            "orchestrator description needs an action verb so Codex surfaces it",
+        )
+        self.assertIn("paper", low)
+        self.assertLessEqual(len(desc), 200)
+
+    def test_orchestrator_not_marked_internal_step(self) -> None:
+        # The entry point must NOT carry the worker "(internal ... step)" marker.
+        desc = frontmatter_value(
+            ROOT / "dist" / "claude" / "skills" / "paper-spine" / "SKILL.md", "description"
+        )
+        self.assertNotIn("internal /paperspine step", desc.lower())
+
+
 class WorkerVisibilityTests(unittest.TestCase):
     """Guarantee #3: worker skills stay VISIBLE (never auto-hidden)."""
 
