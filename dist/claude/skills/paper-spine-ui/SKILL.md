@@ -11,7 +11,8 @@ the user asks to configure PaperSpine interactively.
 ## Required Behavior
 
 The supported interaction is a real terminal window launched by
-`scripts/launch_paperspine_ui.ps1`. Do not run `input()`-based Python inside a
+the installed `launch_paperspine_ui.ps1` (resolve its absolute path under
+`~/.codex/skills/...` or `~/.claude/skills/...`). Do not run `input()`-based Python inside a
 hidden tool surface when the host cannot expose stdin.
 
 In Claude Code, `/paperspine` must call this branch automatically when config is
@@ -20,8 +21,22 @@ missing.
 In Codex, use the same launcher when PowerShell is available:
 
 ```powershell
-powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/launch_paperspine_ui.ps1 -OutputDir paper_rewriting_output
+# Pass the ABSOLUTE path to the installed launcher. Codex/Claude run from the
+# user's project folder, where `scripts/` does not exist, so a relative path is
+# the most common reason the UI window never opens. Resolve the install dir:
+$launcher = @(
+  "$env:USERPROFILE\.codex\skills\paper-spine-ui\scripts\launch_paperspine_ui.ps1",
+  "$env:USERPROFILE\.claude\skills\paper-spine-ui\scripts\launch_paperspine_ui.ps1",
+  "$env:USERPROFILE\.codex\skills\paper-spine-intake\scripts\launch_paperspine_ui.ps1",
+  "$env:USERPROFILE\.claude\skills\paper-spine-intake\scripts\launch_paperspine_ui.ps1"
+) | Where-Object { Test-Path $_ } | Select-Object -First 1
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File $launcher -OutputDir paper_rewriting_output
 ```
+
+If no separate window appears (headless or sandboxed Codex with no
+interactive desktop), add `-InPlace` to run the wizard in the current
+terminal instead; if stdin is still not interactive, fall back to numbered
+menus or native questions. Never silently skip configuration.
 
 The UI writes:
 
