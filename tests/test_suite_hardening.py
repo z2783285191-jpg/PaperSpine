@@ -202,6 +202,8 @@ class SuiteHardeningTests(unittest.TestCase):
                     str(base / "claude" / "commands"),
                     "--openclaw-skills-dir",
                     str(base / "openclaw" / "skills"),
+                    "--codex-prompts-dir",
+                    str(base / "codex" / "prompts"),
                     "--config-home",
                     str(base / "config"),
                 ],
@@ -212,6 +214,7 @@ class SuiteHardeningTests(unittest.TestCase):
                 check=False,
             )
             self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            self.assertTrue((base / "codex" / "prompts" / "paperspine.md").exists())
             self.assertTrue((base / "desktop" / "PaperSpine" / "dist" / "codex" / "paper-spine" / "SKILL.md").exists())
             self.assertTrue((base / "desktop" / "PaperSpine" / "dist" / "codex" / "skills" / "paper-spine-research" / "SKILL.md").exists())
             self.assertTrue((base / "desktop" / "PaperSpine" / ".claude-plugin" / "plugin.json").exists())
@@ -281,8 +284,12 @@ class SuiteHardeningTests(unittest.TestCase):
                     str(base / "codex" / "skills"),
                     "--claude-skills-dir",
                     str(base / "claude" / "skills"),
+                    "--claude-commands-dir",
+                    str(base / "claude" / "commands"),
                     "--openclaw-skills-dir",
                     str(base / "openclaw" / "skills"),
+                    "--codex-prompts-dir",
+                    str(base / "codex" / "prompts"),
                     "--config-home",
                     str(base / "config"),
                 ],

@@ -64,11 +64,14 @@ class CodexSingleEntryTests(unittest.TestCase):
                     "--claude-skills-dir", str(base / "claude" / "skills"),
                     "--claude-commands-dir", str(base / "claude" / "commands"),
                     "--openclaw-skills-dir", str(base / "openclaw" / "skills"),
+                    "--codex-prompts-dir", str(base / "codex" / "prompts"),
                     "--config-home", str(base / "config"),
                 ],
                 cwd=ROOT, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, check=False,
             )
             self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+            # The /paperspine slash command must install for Codex too.
+            self.assertTrue((base / "codex" / "prompts" / "paperspine.md").exists())
             codex = base / "codex" / "skills"
 
             ps_dirs = [p for p in codex.iterdir() if p.is_dir() and p.name == "paper-spine"]
@@ -102,6 +105,15 @@ class UiAutoLaunchTests(unittest.TestCase):
         ui = (ROOT / "dist" / "claude" / "skills" / "paper-spine-ui" / "SKILL.md").read_text(encoding="utf-8")
         self.assertIn(r"$env:USERPROFILE\.codex\skills\paper-spine-ui\scripts\launch_paperspine_ui.ps1", ui)
         self.assertIn(r"$env:USERPROFILE\.claude\skills\paper-spine-ui\scripts\launch_paperspine_ui.ps1", ui)
+
+    def test_codex_paperspine_slash_command_exists_and_routes_to_orchestrator(self) -> None:
+        prompt = ROOT / "dist" / "codex" / "prompts" / "paperspine.md"
+        self.assertTrue(prompt.exists(), "Codex /paperspine custom prompt must ship")
+        text = prompt.read_text(encoding="utf-8")
+        self.assertIn("$paper-spine", text)  # routes to the orchestrator skill
+        self.assertIn("description:", text)  # valid custom-prompt frontmatter
+        self.assertNotIn("-File scripts/launch_paperspine_ui.ps1", text)  # absolute path only
+        self.assertIn(r"$env:USERPROFILE\.codex\skills", text)
 
     def test_orchestrator_auto_launches_ui_when_config_missing(self) -> None:
         orch = (ROOT / "dist" / "claude" / "skills" / "paper-spine" / "SKILL.md").read_text(encoding="utf-8").lower()

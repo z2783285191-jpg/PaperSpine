@@ -13,6 +13,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 DIST_CODEX_SKILL = ROOT / "dist" / "codex" / "paper-spine"
 DIST_CODEX_SKILLS = ROOT / "dist" / "codex" / "skills"
+DIST_CODEX_PROMPTS = ROOT / "dist" / "codex" / "prompts"
 DIST_CLAUDE_SKILLS = ROOT / "dist" / "claude" / "skills"
 DIST_CLAUDE_COMMANDS = ROOT / "dist" / "claude" / "commands"
 DIST_OPENCLAW_SKILLS = ROOT / "dist" / "openclaw" / "skills"
@@ -66,6 +67,12 @@ def parse_args() -> argparse.Namespace:
         type=Path,
         default=home / ".openclaw" / "skills",
         help="OpenClaw skills directory. Receives dist/openclaw/skills/*.",
+    )
+    parser.add_argument(
+        "--codex-prompts-dir",
+        type=Path,
+        default=home / ".codex" / "prompts",
+        help="Codex custom prompts directory. Receives dist/codex/prompts/*.md (the /paperspine command).",
     )
     parser.add_argument("--clean-legacy", action="store_true")
     parser.add_argument("--clean-legacy-claude-nested", action="store_true", help="Deprecated alias for --clean-legacy.")
@@ -167,6 +174,10 @@ def sync_local_installs(args: argparse.Namespace) -> None:
     for skill_dir in DIST_OPENCLAW_SKILLS.iterdir():
         if skill_dir.is_dir():
             copy_tree(skill_dir, args.openclaw_skills_dir / skill_dir.name)
+    if DIST_CODEX_PROMPTS.exists():
+        args.codex_prompts_dir.mkdir(parents=True, exist_ok=True)
+        for prompt_file in DIST_CODEX_PROMPTS.glob("*.md"):
+            shutil.copy2(prompt_file, args.codex_prompts_dir / prompt_file.name)
 
 
 def sync_dist_only() -> None:
