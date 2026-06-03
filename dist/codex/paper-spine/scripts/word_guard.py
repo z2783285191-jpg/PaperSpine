@@ -42,6 +42,38 @@ RAW_MATH_PATTERN = re.compile(
 # pandoc-crossref renders unresolved \ref/\eqref as a literal "[?]".
 BROKEN_CROSSREF = "[?]"
 
+# LaTeX bibliography styles that produce numbered [1] citations. If the source
+# uses one of these but the docx rendered author-date (citeproc's default), the
+# Word citations silently diverge from the compiled PDF.
+NUMERIC_BIB_STYLES = frozenset({
+    "plain", "unsrt", "abbrv", "ieeetr", "ieee", "ieeetran", "acm", "siam", "vancouver",
+})
+BIBSTYLE_PATTERN = re.compile(r"\\bibliographystyle\{([^}]+)\}")
+NUMERIC_CITE_PATTERN = re.compile(r"\[\d+(?:\s*[,–-]\s*\d+)*\]")
+AUTHOR_DATE_CITE_PATTERN = re.compile(r"\([A-Z][A-Za-z'’.-]+(?:\s+et al\.?)?,?\s+\d{4}[a-z]?\)")
+
+
+def citation_style_finding(docx_text: str, source_tex: str) -> str | None:
+    """Warn when a numeric \\bibliographystyle renders as author-date in Word.
+
+    citeproc defaults to author-date, so a numeric LaTeX style needs an explicit
+    numeric CSL (e.g. --csl=ieee.csl) or the docx citations will not match the
+    PDF's [1] style. Conservative: only fires when the source is numeric AND the
+    docx clearly shows author-date citations with no numbered ones.
+    """
+    if not source_tex:
+        return None
+    match = BIBSTYLE_PATTERN.search(source_tex)
+    if not match or match.group(1).strip().lower() not in NUMERIC_BIB_STYLES:
+        return None
+    if AUTHOR_DATE_CITE_PATTERN.search(docx_text) and not NUMERIC_CITE_PATTERN.search(docx_text):
+        return (
+            f"Citation style mismatch: source uses numeric \\bibliographystyle{{{match.group(1).strip()}}} "
+            "but the Word citations render author-date. Pass a numeric CSL "
+            "(e.g. --csl=ieee.csl) so Word matches the PDF's [1] style."
+        )
+    return None
+
 
 @dataclass
 class WordGuardResult:
@@ -74,7 +106,7 @@ def extract_text(document_xml: bytes) -> tuple[str, int]:
     return "\n".join(paragraphs), len(paragraphs)
 
 
-def check_docx(path: Path, min_chars: int) -> WordGuardResult:
+def check_docx(path: Path, min_chars: int, source_tex: str = "") -> WordGuardResult:
     findings: list[str] = []
     text = ""
     paragraph_count = 0
@@ -152,6 +184,10 @@ def check_docx(path: Path, min_chars: int) -> WordGuardResult:
         if corruption:
             findings.append("Chinese encoding corruption detected: GBK text decoded as UTF-8. Re-export with proper encoding.")
 
+    style_finding = citation_style_finding(text, source_tex)
+    if style_finding:
+        findings.append(style_finding)
+
     return WordGuardResult(str(path), not findings, len(text), paragraph_count, findings)
 
 
@@ -177,7 +213,12 @@ def to_markdown(result: WordGuardResult) -> str:
 
 def main() -> int:
     args = parse_args()
-    result = check_docx(Path(args.docx_path), args.min_chars)
+    docx_path = Path(args.docx_path)
+    source_tex = ""
+    sibling_tex = docx_path.parent / "main.tex"
+    if sibling_tex.exists():
+        source_tex = sibling_tex.read_text(encoding="utf-8", errors="ignore")
+    result = check_docx(docx_path, args.min_chars, source_tex)
     markdown = to_markdown(result)
 
     if args.output:

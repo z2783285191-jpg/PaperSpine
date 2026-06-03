@@ -43,3 +43,15 @@ jobs:
         run: python src/scripts/sync_local_installs.py --dist-only
       - name: Fail if dist copies drifted from src
         run: git diff --exit-code
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install pandoc
+        run: sudo apt-get update && sudo apt-get install -y pandoc
+      - name: Run LaTeX-to-Word end-to-end test
+        run: python -m unittest tests.test_e2e_word

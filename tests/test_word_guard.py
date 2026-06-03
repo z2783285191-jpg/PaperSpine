@@ -220,6 +220,41 @@ class WordGuardTests(unittest.TestCase):
             result = run_guard(docx, min_chars=50)
             self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
 
+    def test_numeric_bibstyle_rendered_authordate_warns(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            docx = Path(tmp) / "paper.docx"
+            (Path(tmp) / "main.tex").write_text(
+                "\\documentclass{article}\\bibliographystyle{ieeetr}\\begin{document}x\\end{document}",
+                encoding="utf-8")
+            make_docx(docx, [
+                "As shown by prior work (Devlin et al. 2019) the method is effective overall. " * 6,
+            ])
+            result = run_guard(docx, min_chars=50)
+            self.assertEqual(result.returncode, 1, result.stderr + result.stdout)
+            self.assertIn("Citation style mismatch", result.stdout)
+
+    def test_numeric_bibstyle_with_numeric_citations_passes(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            docx = Path(tmp) / "paper.docx"
+            (Path(tmp) / "main.tex").write_text(
+                "\\bibliographystyle{plain}", encoding="utf-8")
+            make_docx(docx, [
+                "As shown by prior work [1] the method is effective over the full benchmark suite. " * 6,
+            ])
+            result = run_guard(docx, min_chars=50)
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+
+    def test_authordate_bibstyle_does_not_warn(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            docx = Path(tmp) / "paper.docx"
+            (Path(tmp) / "main.tex").write_text(
+                "\\bibliographystyle{plainnat}", encoding="utf-8")
+            make_docx(docx, [
+                "As shown by prior work (Devlin et al. 2019) the method is effective overall. " * 6,
+            ])
+            result = run_guard(docx, min_chars=50)
+            self.assertEqual(result.returncode, 0, result.stderr + result.stdout)
+
 
 if __name__ == "__main__":
     unittest.main()

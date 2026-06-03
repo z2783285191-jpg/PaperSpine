@@ -159,7 +159,13 @@ class SuiteHardeningTests(unittest.TestCase):
                     f"{host}:{skill}:SKILL.md",
                 )
                 if skill != "paper-spine-citation":
-                    self.assertTrue((host_dir / "agents" / "openai.yaml").exists(), f"{host}:{skill}:agents")
+                    host_agents = host_dir / "agents" / "openai.yaml"
+                    self.assertTrue(host_agents.exists(), f"{host}:{skill}:agents")
+                    self.assertEqual(
+                        host_agents.read_bytes(),
+                        (claude_dir / "agents" / "openai.yaml").read_bytes(),
+                        f"{host}:{skill}:agents/openai.yaml",
+                    )
 
     def test_codex_release_layout_exposes_full_suite_and_legacy_bundle(self) -> None:
         for skill in SUITE_SKILLS:

@@ -93,6 +93,11 @@ provides tier-specific writing constraints enforced during all prose generation.
 
 ## Build Rules
 
+- `materials_dir` and the output path may contain spaces or non-ASCII characters
+  (e.g. `exp_lab_en - 副本`). Always quote paths and avoid shell globbing such as
+  `cp materials/* ...`; copy or read files with explicitly quoted paths, prefer
+  Python `pathlib` or (on Windows) PowerShell for file operations. Unquoted
+  globs silently break on such directories.
 - Treat images as potential figure assets, not as verified evidence unless the
   user explains what they show.
 - Use existing document/PDF skills for complex PDF, DOCX, or scanned material

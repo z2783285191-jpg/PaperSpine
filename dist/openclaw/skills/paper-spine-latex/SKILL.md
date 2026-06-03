@@ -30,6 +30,10 @@ unless rewrite/build outputs require it.
 
 ## Rules
 
+- The project path may contain spaces or non-ASCII characters (e.g.
+  `exp_lab_en - 副本`). Quote every path passed to pandoc/copy commands and avoid
+  unquoted shell globs; they break silently on such directories. On Windows
+  prefer PowerShell for file operations.
 - Keep content work separate from LaTeX scaffolding.
 - Preserve citation keys and labels unless there is a verified reason to rename.
 - Copy approved images into `figures/` and use stable labels.
