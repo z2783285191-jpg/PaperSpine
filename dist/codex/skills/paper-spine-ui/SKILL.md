@@ -1,6 +1,6 @@
 ---
 name: paper-spine-ui
-description: Launches the PaperSpine external terminal configuration UI for Codex and Claude Code.
+description: Launches the PaperSpine external terminal configuration UI for Codex and Claude Code. (internal /paperspine step)
 ---
 
 # PaperSpine UI

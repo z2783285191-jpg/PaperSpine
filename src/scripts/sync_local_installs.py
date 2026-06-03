@@ -188,10 +188,35 @@ def sync_dist_only() -> None:
                 shutil.copy2(src_file, dist_copy)
                 synced += 1
 
+    synced += sync_skill_md_across_hosts(dist_root)
+
     print(f"Dist-only sync complete: {synced} files updated")
     print(f"Source scripts: {src_scripts}")
     print(f"Source references: {src_references}")
     print(f"Dist root: {dist_root}")
+
+
+def sync_skill_md_across_hosts(dist_root: Path) -> int:
+    """Fan out each suite skill's canonical SKILL.md to every host copy.
+
+    SKILL.md has no src/ home, so the Claude flat-suite copy is the single
+    source of truth; Codex and OpenClaw copies are generated from it. This keeps
+    the three hosts byte-identical without hand-editing each copy (the previous
+    cause of cross-copy drift and escaping bugs). The legacy
+    dist/codex/paper-spine bundle is a separate artifact and is left untouched.
+    """
+    synced = 0
+    claude_skills = dist_root / "claude" / "skills"
+    for skill in SUITE_SKILLS:
+        canonical = claude_skills / skill / "SKILL.md"
+        if not canonical.is_file():
+            continue
+        for host in ("codex", "openclaw"):
+            target = dist_root / host / "skills" / skill / "SKILL.md"
+            if target.is_file() and target.read_bytes() != canonical.read_bytes():
+                shutil.copy2(canonical, target)
+                synced += 1
+    return synced
 
 
 PAPERSPINE_INTERNAL_SKILLS: set[str] = set()

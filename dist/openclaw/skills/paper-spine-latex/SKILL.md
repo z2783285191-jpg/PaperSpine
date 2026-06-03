@@ -1,6 +1,6 @@
 ---
 name: paper-spine-latex
-description: Handles LaTeX project assembly, figure placement, citations, labels, and compile-safe cleanup.
+description: Handles LaTeX project assembly, figure placement, citations, labels, and compile-safe cleanup. (internal /paperspine step)
 ---
 
 # PaperSpine LaTeX
