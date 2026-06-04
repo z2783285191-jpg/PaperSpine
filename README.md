@@ -2,6 +2,10 @@
 
 [English](README.en.md) | [中文](README.md)
 
+> 📢 **暂停维护 · Maintenance paused (temporary)**
+> 作者近期非常忙，**7 月初**前暂停日常维护，Issue / PR / 讨论会延迟回复，届时统一处理。感谢理解与支持 🙏
+> The author is heavily occupied and will be largely offline until **early July**. Issues / PRs / discussions may be delayed — queued, not ignored. Thanks for your patience 🙏
+
 
 [**PaperSpine 使用讲解视频（Bilibili）**](https://www.bilibili.com/video/BV1rjVa6ZEYu)
 
