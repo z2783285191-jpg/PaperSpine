@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import json, os, re, sys, collections
+import datetime, json, os, re, sys, collections
 sys.stdout.reconfigure(encoding="utf-8")
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -531,7 +531,7 @@ def main():
 
     data = {
         "repo": "WUBING2023/PaperSpine",
-        "generated": "2026-06-11",
+        "generated": datetime.date.today().isoformat(),
         "totalStars": len(users),
         "located": located,
         "withOrg": sum(1 for u in users if u.get("company") and norm_org(u["company"])),
